@@ -24,7 +24,7 @@ class Net(nn.Module):
         x = F.max_pool2d(F.relu(self.conv1(x)),(2,2))
         x = F.max_pool2d(F.relu(self.conv2(x)),(2,2))
 
-        x = x.view(-1,self.numOfWidth_X_Height_X_num(x))
+        x = x.view(-1,self.numOfWidth_X_Height_X_num(x)) # 类似于reshape功能，重塑张量形状
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
