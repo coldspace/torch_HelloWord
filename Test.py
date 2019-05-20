@@ -59,32 +59,32 @@ for num_epoche in range(num_epoches):
     for index, (data,lable) in enumerate(train_data):
         # data torch.Size([60, 1, 28, 28])
         D = Variable(data,requires_grad=True).cuda()  # cuda表示放在GPU计算
-        L = Variable(lable).cuda()
+        L = Variable(lable).cuda()                    # cuda表示放在GPU计算
 
         out = model(D)
-        loss = criterion(out,L)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        loss = criterion(out,L)  # loss 是一个值，不是向量
+        optimizer.zero_grad()    # 清除上一次的梯度，不然这次就会叠加
+        loss.backward()          # 进行反向梯度计算
+        optimizer.step()         # 更新参数
 
-    test_data = DataLoader(dataset=otest_data,batch_size = batch_size,shuffle = True)
-    model.eval()
-    eval_loss = 0
-    num_count = 0
+    test_data = DataLoader(dataset=otest_data,batch_size = batch_size,shuffle = True) # 打乱数据顺序
+    model.eval()  # 设置网络为评估模式
+    eval_loss = 0 # 保存平均损失
+    num_count = 0 # 保存正确识别到的图片数量
     for index, (data,lable) in enumerate(test_data):
         D = Variable(data).cuda()
         L = Variable(lable).cuda()
 
         out = model(D)
-        loss = criterion(out,L)
-
+        loss = criterion(out,L)   # 计算损失，可以使用print输出
         eval_loss += loss.data.item() * L.size(0)  # loss.data.item()是mini-batch平均值
 
         pred = torch.max(out,1)[1] # 返回每一行中最大值的那个元素，且返回其索引。如果是0，则返回每列最大值
-        num_count += (pred == L).sum() # 计算有多少个
+        num_count += (pred == L).sum() # 计算有多少个,这种方法只支持troch.tensor类型
 
     acc = num_count.float() / 10000
-    print("num_epoche:%2d，num_count:%5d,acc: %6.4f"%(num_epoche,num_count,acc))
+    eval_loss = eval_loss.float() / 10000
+    print("num_epoche:%2d，num_count:%5d, acc: %6.4f, eval_loss:%6.4f"%(num_epoche,num_count,acc,eval_loss))
 
 
 
