@@ -1,0 +1,2 @@
+# torch_HelloWord
+基于Torch框架的mnist的数字识别
